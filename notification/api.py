@@ -1,10 +1,20 @@
-from flask import Flask
-import threading
-app = Flask(__name__)
+from app import create_app
+from app import db
+from app.models import User
+
+
+app = create_app()
+
 
 @app.route('/')
 def hello_world():
-    return f'<h1>Yep! Up and running... {threading.current_thread().name}</h1>'
+    return '<h1>Yep! Up and running...</h1>'
+
+
+@app.shell_context_processor
+def make_shell_context():
+    return {'db': db, 'User': User}
 
 if __name__ == '__main__':
+    # TODO: use gunicorn
     app.run(host='0.0.0.0', port=5000, debug=True)
