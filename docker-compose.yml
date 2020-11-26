@@ -2,8 +2,36 @@ version: "3.8"
 services:
     notification-service:
         build: ./notification
+        networks:
+            - frontend
         ports:
             - "5000:5000"
         volumes:
             - ./notification:/usr/src/app
+    db:
+        hostname: "mysqldb"
+        image: mysql:latest
+        restart: always
+        networks:
+            - backend
+        # TODO: use env_file or collect from environment variables
+        environment:
+            MYSQL_DATABASE: 'db'
+            MYSQL_USER: 'user'
+            MYSQL_PASSWORD: 'password'
+            MYSQL_ROOT_PASSWORD: 'password'
+        ports:
+            - "3306:3306"
+        expose:
+            - "3306"
+        volumes:
+            - ./db/config/conf.d:/etc/mysql/conf.d
+            - ./db/data:/var/lib/mysql
 
+
+networks:
+    frontend:
+        driver: bridge
+    backend:
+        name: mysql-net
+        driver: bridge

@@ -1,4 +1,10 @@
-FROM python:3-onbuild
-COPY ./api.py /usr/src/app
-COPY ./requirements.txt /usr/src/app
+FROM python:3.9-buster
+
+WORKDIR /usr/src/app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
 CMD ["python", "api.py"]
