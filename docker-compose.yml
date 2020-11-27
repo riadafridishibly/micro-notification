@@ -1,17 +1,12 @@
 version: "3.8"
 services:
-    notification-service:
-        build: ./notification
-        networks:
-            - frontend
-        ports:
-            - "5000:5000"
-        volumes:
-            - ./notification:/usr/src/app
     db:
-        hostname: "mysqldb"
         image: mysql:latest
         restart: always
+        command: --init-file /data/application/init.sql
+        # https://stackoverflow.com/a/55706057
+        cap_add:
+            - SYS_NICE  # CAP_SYS_NICE (problem was: "mbind: Operation not permitted")
         networks:
             - backend
         # TODO: use env_file or collect from environment variables
@@ -25,13 +20,23 @@ services:
         expose:
             - "3306"
         volumes:
+            - ./db/init.sql:/data/application/init.sql
             - ./db/config/conf.d:/etc/mysql/conf.d
             - ./db/data:/var/lib/mysql
 
+    notification-service:
+        depends_on:
+            - db
+        build: ./notification
+        networks:
+            - backend
+        ports:
+            - "5000:5000"
+        volumes:
+            - ./notification:/usr/src/app
+
 
 networks:
-    frontend:
-        driver: bridge
     backend:
         name: mysql-net
         driver: bridge

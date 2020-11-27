@@ -1,5 +1,8 @@
 import os
 
+DB_BASE_URI = 'mysql+pymysql://root:password@db:3306'
+DB_NAME = 'test'
+
 
 class Config:
     """
@@ -8,9 +11,10 @@ class Config:
     APP_NAME = 'notification'
     # SECRET_KEY = '!very-secret'
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-            'DATABASE_URL',
-            'mysql+pymysql://root:password@localhost:3306/test'
-        )
-    # SQLALCHEMY_TRACK_MODIFICATIONS = False
+        'DATABASE_URL',
+        DB_BASE_URI + '/' + DB_NAME
+    )
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
 
 del os
