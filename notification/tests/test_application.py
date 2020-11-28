@@ -1,5 +1,6 @@
 from app.models import Order
 from app import create_app, db
+from datetime import datetime, timedelta
 import sqlalchemy
 import os
 import flask_migrate
@@ -8,7 +9,7 @@ import pytest
 
 # ----------------- DATA BASE URI ----------------------
 DB_BASE_URI = 'mysql+pymysql://root:password@db:3306'
-DB_NAME = 'test2'
+DB_NAME = 'test'
 
 
 # ----------------- TEST CONFIG ------------------------
@@ -112,8 +113,10 @@ def test_db_insert(cursor):
 
 
 # ------------- APPLICATION SPECIFIC TESTS -------------
+# The following functions are mostly copy pasted. I'll
+# refactor 'em later. :D
 
-def test_api_get_req(cursor):
+def test_completion_default_85(cursor):
     drop_and_create(cursor)
 
     app = create_app(TestConfig)
@@ -129,6 +132,88 @@ def test_api_get_req(cursor):
             flask_migrate.upgrade()
             o = Order(id=0, supply_id=1, order_id='ABCD', status=False)
             db.session.add(o)
+            db.session.commit()
+        resp = client.get('/api/supply/1')
+
+    assert resp.status_code == 200 and resp.json['completion_rate'] == 0.85
+
+
+def test_completion_100(cursor):
+    drop_and_create(cursor)
+
+    app = create_app(TestConfig)
+    api = flask_restful.Api(app)
+
+    from api import NotificationAPI
+
+    api.add_resource(NotificationAPI, '/api/supply/<int:supply_id>')
+
+    with app.test_client() as client:
+        with app.app_context():
+            # populate db
+            flask_migrate.upgrade()
+            timestamp = datetime.utcnow() - timedelta(days=2)
+            for i in range(100):
+                o = Order(supply_id=1, order_id='A' + str(i),
+                          status=True, timestamp=timestamp)
+                db.session.add(o)
+            db.session.commit()
+        resp = client.get('/api/supply/1')
+
+    assert resp.status_code == 200 and resp.json['completion_rate'] == 1.00
+
+
+def test_completion_40(cursor):
+    drop_and_create(cursor)
+
+    app = create_app(TestConfig)
+    api = flask_restful.Api(app)
+
+    from api import NotificationAPI
+
+    api.add_resource(NotificationAPI, '/api/supply/<int:supply_id>')
+
+    with app.test_client() as client:
+        with app.app_context():
+            # populate db
+            flask_migrate.upgrade()
+            timestamp = datetime.utcnow() - timedelta(days=2)
+            for i in range(100):
+                status = False
+                if i < 40:
+                    status = True
+                o = Order(supply_id=1, order_id='A' + str(i),
+                          status=status, timestamp=timestamp)
+                db.session.add(o)
+            db.session.commit()
+        resp = client.get('/api/supply/1')
+
+    assert resp.status_code == 200 and resp.json['completion_rate'] == 0.40
+
+
+def test_completion_tricky_85(cursor):
+    """If the driver is assigned 100 rides today (which is highly unlikely)
+    he'll also get 0.85 completion rate!
+    """
+    drop_and_create(cursor)
+
+    app = create_app(TestConfig)
+    api = flask_restful.Api(app)
+
+    from api import NotificationAPI
+
+    api.add_resource(NotificationAPI, '/api/supply/<int:supply_id>')
+
+    with app.test_client() as client:
+        with app.app_context():
+            # populate db
+            flask_migrate.upgrade()
+            timestamp = datetime.utcnow()
+            for i in range(100):
+                status = True
+                o = Order(supply_id=1, order_id='A' + str(i),
+                          status=status, timestamp=timestamp)
+                db.session.add(o)
             db.session.commit()
         resp = client.get('/api/supply/1')
 

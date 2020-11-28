@@ -1,7 +1,7 @@
 import os
 
 DB_BASE_URI = 'mysql+pymysql://root:password@db:3306'
-DB_NAME = 'test'
+DB_NAME = 'mydb'
 
 
 class Config:

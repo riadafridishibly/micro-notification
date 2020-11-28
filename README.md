@@ -1,5 +1,9 @@
 # Notification Service
 
+## IMPORTANT
+In `db/init.sql` file the the first line is `DROP DATABASE IF EXISTS test;`. Which will remove database every time the container is built. Comment this if you don't want a fresh start every time.
+
+
 ## How to run!
 Run the following command.
 ```sh

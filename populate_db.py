@@ -9,7 +9,8 @@ REQ_URL = 'http://localhost:5000/api/dev/supply/1'
 REQ_METHOD = 'POST'
 
 
-def post(supply_id: int, order_id: str, status: bool, timestamp: 'datetime.timestamp'):
+def post(supply_id: int, order_id: str,
+         status: bool, timestamp: 'datetime.timestamp'):
     encoded_body = json.dumps({
         'supply_id': supply_id,
         'order_id': order_id,
