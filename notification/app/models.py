@@ -1,8 +1,13 @@
 from datetime import datetime
 from app import db
 
+CANCELLED = False
+COMPLETED = True
+
 
 class Order(db.Model):
+    __tablename__ = 'order'
+
     def __init__(self, **kwargs):
         super(Order, self).__init__(**kwargs)
 
@@ -17,4 +22,10 @@ class Order(db.Model):
         st = 'CANCELLED'
         if self.status:
             st = 'COMPLETED'
-        return f'<Order(id={self.id}, s_id={self.supply_id}, o_id={self.order_id}, status={st}, t={self.timestamp.ctime()})>'
+        return '<Order(i: {0}, si: {1}, oi: {2}, sts: {3}, t: {4})>'.format(
+            self.id,
+            self.supply_id,
+            self.order_id,
+            st,
+            self.timestamp.ctime() if self.timestamp else None
+        )
