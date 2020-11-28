@@ -2,7 +2,7 @@ from app import create_app
 from app import db
 from app.models import Order, COMPLETED
 from flask_restful import Resource, Api
-# from flask import request # to use in put request!
+from flask import request  # to use in put request!
 from datetime import datetime
 
 
@@ -81,23 +81,64 @@ class NotificationAPI(Resource):
         return get_notification(supply_id)
 
 
-# class OrderAPI(Resource):
-#     """Just to populate the database? maybe?
-#     NotImplemented!
-#     """
+class OrderAPI(Resource):
+    """Just to populate the database? maybe?
+    """
 
-#     def put(self, supply_id):
-#         ret = request.json
-#         ret['supply_id'] = supply_id
-#         return ret
+    def get(self, supply_id):
+        query = Order.query.filter(Order.supply_id == supply_id).all()
+        out = []
+        if len(query) == 0:
+            return {'message': 'Not Found'}, 404
+        for o in query:
+            ret = {}
+            ret['id'] = o.id
+            ret['status'] = o.status
+            ret['supply_id'] = o.supply_id
+            ret['order_id'] = o.order_id
+            ret['timestamp'] = o.timestamp.ctime()
+            out.append(ret)
+        return out
+
+    def post(self, supply_id):
+        r = request.json
+        o = Order(**r)
+        param = {}
+
+        supply_id = r.get('supply_id', None)
+        try:
+            int(supply_id)
+        except (ValueError, TypeError):
+            return dict(), 400
+        param['supply_id'] = supply_id
+
+        order_id = r.get('order_id', None)
+        if not order_id:
+            return dict(), 400
+        param['order_id'] = str(order_id)
+
+        status = r.get('status', None)
+        try:
+            bool(status)
+        except (ValueError, TypeError):
+            return dict(), 400
+        param['status'] = bool(status)
+
+        timestamp = r.get('timestamp', None)
+        if timestamp is not None:
+            timestamp = datetime.utcfromtimestamp(timestamp)
+            param['timestamp'] = timestamp
+
+        o = Order(**param)
+        db.session.add(o)
+        db.session.commit()
+
+        param['timestamp'] = param['timestamp'].ctime()
+        return param, 201
 
 
 api.add_resource(NotificationAPI, '/api/supply/<int:supply_id>')
-# api.add_resource(OrderAPI, '/api/supply/<int:supply_id>')
-
-if __name__ == '__main__':
-    # TODO: use gunicorn
-    app.run(host='0.0.0.0', port=5000, debug=True)
+api.add_resource(OrderAPI, '/api/dev/supply/<int:supply_id>')
 
 
 @ app.shell_context_processor

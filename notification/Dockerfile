@@ -6,8 +6,6 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
+RUN ["chmod", "+x", "/usr/src/app/entrypoint.sh"]
 
-ENV FLASK_APP=api.py
-ENV PYTHONPATH=/usr/src/app
-
-CMD ["python", "api.py"]
+ENTRYPOINT ["sh", "./entrypoint.sh"]

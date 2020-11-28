@@ -94,7 +94,7 @@ def test_db_migration(cursor):
 
     res = cursor.execute('SHOW TABLES;')
     tables = {t[0] for t in res}
-    assert 'order' in tables
+    assert 'orders' in tables
 
 
 def test_db_insert(cursor):

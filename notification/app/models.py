@@ -6,7 +6,7 @@ COMPLETED = True
 
 
 class Order(db.Model):
-    __tablename__ = 'order'
+    __tablename__ = 'orders'
 
     def __init__(self, **kwargs):
         super(Order, self).__init__(**kwargs)
