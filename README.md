@@ -9,12 +9,20 @@ In `db/init.sql` file the the first line is `DROP DATABASE IF EXISTS mydb;`. Whi
 - [Dealing Wih Time And Query](./notification/README.md)
 
 ## How to run!
-Run the following command.
+For the first time **database** need to be initialized first. To do this run,
+
+```sh
+docker-compose up db
+```
+
+When the initialization is done, stop the process with (`CTRL-C`) and then run the following command.
 ```sh
 docker-compose up
 ```
 
-But currently the database is empty. To insert some data you can run `populate_db.py` and currently it requires `urllib3`. It'll add some data to the database by using a development api.
+The issue with `database` init can be solved by a `wait-for-it.sh` script.
+
+Currently the database is empty. To insert some data you can run `populate_db.py` and currently it requires `urllib3`. It'll add some data to the database by using a development api.
 
 Now you're good to go.
 
@@ -84,11 +92,12 @@ Server: gunicorn/20.0.4
 
 ## Running the test
 
-Run this command first,
+If the database is not initialized, then follow the [How To Run](#how-to-run). Then run this,
+
 ```sh
 docker-compose up
 ```
-Then
+Run the tests
 ```sh
 docker-compose exec notification-service pytest -v tests/
 ```
