@@ -1,5 +1,5 @@
 ## Dealing with Time
-DateTime is stored in UTC. We need to exclude today from the query. So what is done essentially is created a datetime object at the beginning of a day.
+DateTime is stored in UTC. We need to exclude today from the query. So what is essentially done is created a datetime object at the beginning of a day.
 
 ```python
 from datetime import datetime
@@ -9,7 +9,7 @@ Any date less than `start_of_the_day` is considered **not today**. I might be wr
 
 
 ## How to deal with `Not Found`?
-The following lookup should be happen in another table to check whether the driver exists with the particular id.
+The following lookup should be happened in another table to check whether the driver exists with the particular id.
 
 ```python
 query = Order.query.filter(Order.supply_id == supply_id).count()
