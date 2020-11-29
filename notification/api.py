@@ -45,6 +45,7 @@ def get_notification(supply_id: int):
                                 datetime.utcnow(),
                                 datetime.min.time())
 
+    # this should be a lookup in another table.
     # how to deal with not found?
     query = Order.query.filter(Order.supply_id == supply_id).count()
     if query == 0:

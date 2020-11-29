@@ -1,8 +1,12 @@
 # Notification Service
 
 ## IMPORTANT
-In `db/init.sql` file the the first line is `DROP DATABASE IF EXISTS test;`. Which will remove database every time the container is built. Comment this if you don't want a fresh start every time.
+In `db/init.sql` file the the first line is `DROP DATABASE IF EXISTS mydb;`. Which will remove `mydb` database every time the container is built. Comment this out if you don't want a fresh start every time.
 
+## Attached Files
+
+- [DESIGN.md](./notification/DESIGN.md)
+- [Dealing Wih Time And Query](./notification/README.md)
 
 ## How to run!
 Run the following command.
@@ -19,16 +23,18 @@ Using [http](https://httpie.io/) it's easy to send request and see response.
 
 ```sh
 $ http GET localhost:5000/api/supply/1
-HTTP/1.0 200 OK
+HTTP/1.1 200 OK
+Connection: close
 Content-Length: 93
 Content-Type: application/json
-Date: Sat, 28 Nov 2020 19:23:57 GMT
-Server: Werkzeug/1.0.1 Python/3.9.0
+Date: Sun, 29 Nov 2020 08:25:01 GMT
+Server: gunicorn/20.0.4
 
 {
     "completion_rate": 0.85,
     "message": "Please complete more to get more requests."
 }
+
 ```
 
 
@@ -36,11 +42,12 @@ Server: Werkzeug/1.0.1 Python/3.9.0
 Getting all values that has specific **supply id**.
 ```sh
 $ http GET localhost:5000/api/dev/supply/1
-HTTP/1.0 200 OK
+HTTP/1.1 200 OK
+Connection: close
 Content-Length: 619
 Content-Type: application/json
-Date: Sat, 28 Nov 2020 19:25:11 GMT
-Server: Werkzeug/1.0.1 Python/3.9.0
+Date: Sun, 29 Nov 2020 07:44:27 GMT
+Server: gunicorn/20.0.4
 
 [
     {
@@ -48,28 +55,28 @@ Server: Werkzeug/1.0.1 Python/3.9.0
         "order_id": "AAAA",
         "status": true,
         "supply_id": 1,
-        "timestamp": "Thu Nov 26 19:22:10 2020"
+        "timestamp": "Fri Nov 27 07:44:02 2020"
     },
     {
         "id": 2,
         "order_id": "BBBB",
         "status": true,
         "supply_id": 1,
-        "timestamp": "Wed Nov 25 19:22:10 2020"
+        "timestamp": "Thu Nov 26 07:44:02 2020"
     },
     {
         "id": 3,
         "order_id": "CCCC",
         "status": true,
         "supply_id": 1,
-        "timestamp": "Tue Nov 24 19:22:10 2020"
+        "timestamp": "Wed Nov 25 07:44:02 2020"
     },
     {
         "id": 4,
         "order_id": "DDDD",
         "status": true,
         "supply_id": 1,
-        "timestamp": "Mon Nov 23 19:22:10 2020"
+        "timestamp": "Tue Nov 24 07:44:02 2020"
     }
 ]
 

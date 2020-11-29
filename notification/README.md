@@ -9,6 +9,7 @@ Any date less than `start_of_the_day` is considered **not today**. I might be wr
 
 
 ## How to deal with `Not Found`?
+The following lookup should be happen in another table to check whether the driver exists with the particular id.
 
 ```python
 query = Order.query.filter(Order.supply_id == supply_id).count()
@@ -17,6 +18,7 @@ if query == 0:
 ```
 
 ## Check if the driver was assigned to at least 100 rides
+I think there's a better way to do this. What if we keep a counter!
 
 ```python
 query = Order.query.filter(Order.supply_id == supply_id)\
@@ -28,6 +30,10 @@ if query < 100:
     # if the driver yet to be assigned 100 rides,
     # then the completion rate 0.85
     return notify_dict(85)
+```
+
+## Final Query
+```python
 
 query = Order.query.filter(Order.supply_id == supply_id)\
     .order_by(Order.timestamp.desc())\
